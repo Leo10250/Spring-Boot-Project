@@ -1,26 +1,19 @@
 package com.example.demo;
 
-import java.io.FileReader;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import com.example.demo.model.Location;
-import com.example.demo.model.Run;
-import com.example.demo.repository.JdbcClientRunRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.example.demo.model.User;
+import com.example.demo.service.UserHttpClient;
 
 @SpringBootApplication
 public class Application {
@@ -32,8 +25,18 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner runner(JdbcClientRunRepository runRepository) {
+    UserHttpClient userHttpClient() {
+        RestClient restClient = RestClient.create("https://jsonplaceholder.typicode.com/");
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(RestClientAdapter.create(restClient))
+                .build();
+        return factory.createClient(UserHttpClient.class);
+    }
+
+    @Bean
+    CommandLineRunner runner(UserHttpClient userHttpClient) {
         return args -> {
+            List<User> users = userHttpClient.findAll();
+            System.out.println(users);
         };
     }
 

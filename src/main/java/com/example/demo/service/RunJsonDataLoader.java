@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -12,8 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.model.Run;
-import com.example.demo.model.Runs;
-import com.example.demo.repository.JdbcClientRunRepository;
 import com.example.demo.repository.RunRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

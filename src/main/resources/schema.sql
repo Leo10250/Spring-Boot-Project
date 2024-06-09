@@ -1,3 +1,5 @@
+drop table if exists Run;
+
 create table if not exists Run(
     id int not null,
     title varchar(250) not null,
