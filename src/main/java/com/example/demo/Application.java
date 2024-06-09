@@ -34,11 +34,6 @@ public class Application {
     @Bean
     CommandLineRunner runner(JdbcClientRunRepository runRepository) {
         return args -> {
-            // Run run = new Run(1, "First Run", LocalDateTime.now(),
-            // LocalDateTime.now().plus(1, ChronoUnit.HOURS), 3,
-            // Location.OUTDOOR);
-            // runRepository.create(run);
-            // log.info("Run = " + run);
         };
     }
 
