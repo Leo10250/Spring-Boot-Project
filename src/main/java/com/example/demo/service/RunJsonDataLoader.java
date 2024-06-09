@@ -35,21 +35,27 @@ public class RunJsonDataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (runRepository.count() == 0) {
-            // objectMapper.registerModule(new JavaTimeModule());
-            // JSONParser parser = new JSONParser();
-            // JSONArray arr = (JSONArray) parser.parse(
-            // new FileReader("D:/Document
-            // Folder/GitHub/Spring-Boot-Demo/src/main/resources/data/runs.json"));
-            // String str = arr.toString();
-            // List<Run> runs = objectMapper.readValue(str, new TypeReference<List<Run>>() {
-            // });
-
-            try (InputStream inputStream = TypeReference.class.getResourceAsStream("/data/runs.json")) {
-                Runs allRuns = objectMapper.readValue(inputStream, Runs.class);
-                runRepository.saveAll(allRuns.runs());
+            try {
+                objectMapper.registerModule(new JavaTimeModule());
+                JSONParser parser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) parser.parse(
+                        new FileReader("D:/Document Folder/GitHub/Spring-Boot-Demo/src/main/resources/data/runs.json"));
+                JSONArray jsonArray = (JSONArray) jsonObject.get("runs");
+                String json_str = jsonArray.toString();
+                List<Run> runs = objectMapper.readValue(json_str, new TypeReference<List<Run>>() {
+                });
+                runRepository.saveAll(runs);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to read JSON data", e);
             }
+
+            // try (InputStream inputStream =
+            // TypeReference.class.getResourceAsStream("/data/runs.json")) {
+            // Runs allRuns = objectMapper.readValue(inputStream, Runs.class);
+            // runRepository.saveAll(allRuns.runs());
+            // } catch (Exception e) {
+            // throw new RuntimeException("Failed to read JSON data", e);
+            // }
         }
 
     }
