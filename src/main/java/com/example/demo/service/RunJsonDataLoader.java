@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.model.Run;
 import com.example.demo.model.Runs;
-import com.example.demo.repository.RunRepository;
+import com.example.demo.repository.JdbcClientRunRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,10 +24,10 @@ import java.io.*;
 public class RunJsonDataLoader implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(RunJsonDataLoader.class);
-    private final RunRepository runRepository;
+    private final JdbcClientRunRepository runRepository;
     private final ObjectMapper objectMapper;
 
-    public RunJsonDataLoader(RunRepository runRepository, ObjectMapper objectMapper) {
+    public RunJsonDataLoader(JdbcClientRunRepository runRepository, ObjectMapper objectMapper) {
         this.runRepository = runRepository;
         this.objectMapper = objectMapper;
     }
@@ -36,6 +36,7 @@ public class RunJsonDataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (runRepository.count() == 0) {
             try {
+                // handles Java 8 DateTime
                 objectMapper.registerModule(new JavaTimeModule());
                 JSONParser parser = new JSONParser();
                 JSONObject jsonObject = (JSONObject) parser.parse(
@@ -44,6 +45,7 @@ public class RunJsonDataLoader implements CommandLineRunner {
                 String json_str = jsonArray.toString();
                 List<Run> runs = objectMapper.readValue(json_str, new TypeReference<List<Run>>() {
                 });
+                log.info("Reading {} runs from JSON data and saving it to a database.", runs.size());
                 runRepository.saveAll(runs);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to read JSON data", e);
@@ -52,10 +54,14 @@ public class RunJsonDataLoader implements CommandLineRunner {
             // try (InputStream inputStream =
             // TypeReference.class.getResourceAsStream("/data/runs.json")) {
             // Runs allRuns = objectMapper.readValue(inputStream, Runs.class);
+            // log.info("Reading {} runs from JSON data and saving it to a database.",
+            // allRuns.runs().size());
             // runRepository.saveAll(allRuns.runs());
             // } catch (Exception e) {
             // throw new RuntimeException("Failed to read JSON data", e);
             // }
+        } else {
+            log.info("Not loading Runs from JSON data because the collection is contains data.");
         }
 
     }

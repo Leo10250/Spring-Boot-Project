@@ -48,22 +48,32 @@ public class RunController {
         return run.get();
     }
 
+    @GetMapping("/location/{location}")
+    public List<Run> findAllByLocation(@PathVariable String location) {
+        return runRepository.findAllByLocation(location);
+    }
+
+    @GetMapping("/title/{title}")
+    public List<Run> findAllByTitle(@PathVariable String title) {
+        return runRepository.findAllByTitle(title);
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public void create(@Valid @RequestBody Run run) {
-        runRepository.create(run);
+        runRepository.save(run);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public void update(@RequestBody Run run, @PathVariable Integer id) {
-        runRepository.update(run, id);
+        runRepository.save(run);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
-        runRepository.delete(id);
+        runRepository.delete(runRepository.findById(id).get());
     }
 
 }

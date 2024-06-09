@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.example.demo.model.Location;
 import com.example.demo.model.Run;
-import com.example.demo.repository.RunRepository;
+import com.example.demo.repository.JdbcClientRunRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,7 +25,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @SpringBootApplication
 public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -33,7 +32,7 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner runner(RunRepository runRepository) {
+    CommandLineRunner runner(JdbcClientRunRepository runRepository) {
         return args -> {
             // Run run = new Run(1, "First Run", LocalDateTime.now(),
             // LocalDateTime.now().plus(1, ChronoUnit.HOURS), 3,
